@@ -3,7 +3,6 @@ require('dotenv').config();
 module.exports = {
     name: 'ajuda',
     execute(message, args, client) {
-
         const prefix = process.env.PREFIX || '!';
         
         const helpEmbed = {
@@ -13,7 +12,7 @@ module.exports = {
             fields: [
                 {
                     name: '🎮 Comandos de Jogos',
-                    value: `${prefix}jogos - Mostra todos os jogos\n${prefix}adivinhar - Adivinhe o número\n${prefix}jokenpo - Pedra, papel e tesoura\n${prefix}quiz - Quiz de perguntas\n${prefix}forca - Jogo da forca\n${prefix}dado - Rola um dado`,
+                    value: `${prefix}jogos - Mostra todos os jogos\n${prefix}adivinhar - Adivinhe o número\n${prefix}jokenpo - Pedra, papel e tesoura\n${prefix}quiz - Quiz de perguntas\n${prefix}forca - Jogo da forca\n${prefix}dado - Rola um dado\n${prefix}velha - Jogo da velha interativo`,
                     inline: false
                 },
                 {
@@ -28,12 +27,12 @@ module.exports = {
                 },
                 {
                     name: '🛠️ Comandos Úteis',
-                    value: `${prefix}calc - Calculadora\n${prefix}timer - Temporizador\n${prefix}clima - Consulte o clima`,
+                    value: `${prefix}calc - Calculadora\n${prefix}timer - Temporizador\n${prefix}clima - Consulte o clima\n${prefix}contador - Contador interativo\n${prefix}lembrete - Agenda lembretes`,
                     inline: false
                 },
                 {
                     name: '😄 Comandos Divertidos',
-                    value: `${prefix}piada - Conta uma piada\n${prefix}8ball - Bola mágica 8\n${prefix}meme - Conta um meme`,
+                    value: `${prefix}piada - Conta uma piada\n${prefix}8ball - Bola mágica 8\n${prefix}meme - Conta um meme\n${prefix}emoji - Gerador de emojis`,
                     inline: false
                 }
             ],
