@@ -1,4 +1,4 @@
-const config = require('../config.json');
+require('dotenv').config();
 
 module.exports = {
     name: 'messageCreate',
@@ -6,11 +6,12 @@ module.exports = {
         // Ignorar mensagens de outros bots
         if (message.author.bot) return;
         
-        // Verificar se a mensagem começa com o prefixo !
-        if (!message.content.startsWith(config.prefix)) return;
+        const prefix = process.env.PREFIX || '!';
+        
+        // Verificar se a mensagem começa com o prefixo
+        if (!message.content.startsWith(prefix)) return;
 
-        // Separar comando e argumentos
-        const args = message.content.slice(config.prefix.length).trim().split(/ +/);
+        const args = message.content.slice(prefix.length).trim().split(/ +/);
         const commandName = args.shift().toLowerCase();
 
         console.log(`📨 Comando recebido: ${commandName} por ${message.author.tag}`);
@@ -19,7 +20,7 @@ module.exports = {
         const command = client.commands.get(commandName);
 
         if (!command) {
-            return message.reply(`❌ Comando não encontrado! Use **${config.prefix}ajuda** para ver os comandos disponíveis.`);
+            return message.reply(`❌ Comando não encontrado! Use **${prefix}ajuda** para ver os comandos disponíveis.`);
         }
 
         try {

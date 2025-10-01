@@ -1,36 +1,38 @@
-const config = require('../../config.json');
+require('dotenv').config();
 
 module.exports = {
     name: 'ajuda',
     execute(message, args, client) {
+        const prefix = process.env.PREFIX || '!';
+        
         const helpEmbed = {
             color: 39423,
             title: '📋 Comandos do TUTU Bot',
-            description: `Prefixo: **${config.prefix}**`,
+            description: `Prefixo: **${prefix}**`,
             fields: [
                 {
                     name: '🎮 Comandos de Jogos',
-                    value: '`!jogos` - Mostra todos os jogos\n`!adivinhar` - Adivinhe o número\n`!jokenpo` - Pedra, papel e tesoura\n`!quiz` - Quiz de perguntas\n`!forca` - Jogo da forca\n`!dado` - Rola um dado',
+                    value: `${prefix}jogos - Mostra todos os jogos\n${prefix}adivinhar - Adivinhe o número\n${prefix}jokenpo - Pedra, papel e tesoura\n${prefix}quiz - Quiz de perguntas\n${prefix}forca - Jogo da forca\n${prefix}dado - Rola um dado\n${prefix}velha - Jogo da velha interativo`,
                     inline: false
                 },
                 {
                     name: '🔧 Comandos de Moderação',
-                    value: '`!limpar` - Limpa mensagens (apenas mods)',
+                    value: `${prefix}limpar - Limpa mensagens (apenas mods)`,
                     inline: false
                 },
                 {
                     name: 'ℹ️ Comandos de Informação',
-                    value: '`!ajuda` - Mostra esta mensagem\n`!userinfo` - Informações do usuário\n`!serverinfo` - Informações do servidor',
+                    value: `${prefix}ajuda - Mostra esta mensagem\n${prefix}userinfo - Informações do usuário\n${prefix}serverinfo - Informações do servidor`,
                     inline: false
                 },
                 {
                     name: '🛠️ Comandos Úteis',
-                    value: '`!calc` - Calculadora\n`!timer` - Temporizador\n`!clima` - Consulte o clima',
+                    value: `${prefix}calc - Calculadora\n${prefix}timer - Temporizador\n${prefix}clima - Consulte o clima\n${prefix}contador - Contador interativo\n${prefix}lembrete - Agenda lembretes`,
                     inline: false
                 },
                 {
                     name: '😄 Comandos Divertidos',
-                    value: '`!piada` - Conta uma piada\n`!8ball` - Bola mágica 8\n`!meme` - Conta um meme',
+                    value: `${prefix}piada - Conta uma piada\n${prefix}8ball - Bola mágica 8\n${prefix}meme - Conta um meme\n${prefix}emoji - Gerador de emojis`,
                     inline: false
                 }
             ],
