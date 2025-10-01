@@ -3,9 +3,6 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
-// Configuração
-const config = require('./config.json');
-
 // Criar cliente Discord
 const client = new Client({
     intents: [
