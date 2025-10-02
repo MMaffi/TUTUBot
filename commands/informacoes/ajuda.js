@@ -12,7 +12,7 @@ module.exports = {
             fields: [
                 {
                     name: '🎮 Comandos de Jogos',
-                    value: `${prefix}jogos - Mostra todos os jogos\n${prefix}adivinhar - Adivinhe o número\n${prefix}jokenpo - Pedra, papel e tesoura\n${prefix}quiz - Quiz de perguntas\n${prefix}forca - Jogo da forca\n${prefix}dado - Rola um dado\n${prefix}velha - Jogo da velha interativo`,
+                    value: `${prefix}jogos - Mostra todos os jogos\n${prefix}adivinhar - Adivinhe o número\n${prefix}jokenpo - Pedra, papel e tesoura\n${prefix}quiz - Quiz de perguntas\n${prefix}forca - Jogo da forca\n${prefix}dado - Rola um dado`,
                     inline: false
                 },
                 {
