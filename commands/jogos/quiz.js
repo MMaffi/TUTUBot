@@ -8,17 +8,30 @@ module.exports = {
 
     // Handler para botões do quiz
     buttonHandler: async (interaction, client) => {
-        if (!interaction.isButton()) return;
+        if (!interaction.isButton()) return false;
 
         const customId = interaction.customId;
 
-        if (customId === 'quiz_new') {
-            return startNewQuiz(interaction, client);
+        // Só processa se for um botão do quiz
+        if (customId.startsWith('quiz_')) {
+            try {
+                if (customId === 'quiz_new') {
+                    await startNewQuiz(interaction, client);
+                    return true;
+                } else {
+                    await handleQuizAnswer(interaction, client);
+                    return true;
+                }
+            } catch (error) {
+                // Se for "Unknown interaction", apenas retorna true pois já foi processado
+                if (error.code === 10062 || error.code === 40060) {
+                    return true;
+                }
+                throw error;
+            }
         }
 
-        if (customId.startsWith('quiz_')) {
-            return handleQuizAnswer(interaction, client);
-        }
+        return false;
     }
 };
 

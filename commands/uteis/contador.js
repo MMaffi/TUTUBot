@@ -1,4 +1,4 @@
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const counters = new Map();
 
 module.exports = {
@@ -30,77 +30,101 @@ module.exports = {
 
     // Handler para botões
     buttonHandler: async (interaction, client) => {
-        if (!interaction.isButton()) return;
+        if (!interaction.isButton()) return false;
 
-        const guildId = interaction.guild.id;
-        
-        if (!counters.has(guildId)) {
-            counters.set(guildId, 0);
+        // Verifica se é um botão do contador
+        if (!['somar', 'subtrair', 'reset'].includes(interaction.customId)) {
+            return false;
         }
 
-        let current = counters.get(guildId);
-        let newCount = current;
+        try {
+            const guildId = interaction.guild.id;
+            
+            if (!counters.has(guildId)) {
+                counters.set(guildId, 0);
+            }
 
-        switch (interaction.customId) {
-            case 'somar':
-                newCount = current + 1;
-                counters.set(guildId, newCount);
-                break;
-            case 'subtrair':
-                newCount = current - 1;
-                counters.set(guildId, newCount);
-                break;
-            case 'reset':
-                newCount = 0;
-                counters.set(guildId, newCount);
-                break;
-            default:
-                return;
+            let current = counters.get(guildId);
+            let newCount = current;
+
+            switch (interaction.customId) {
+                case 'somar':
+                    newCount = current + 1;
+                    counters.set(guildId, newCount);
+                    break;
+                case 'subtrair':
+                    newCount = current - 1;
+                    counters.set(guildId, newCount);
+                    break;
+                case 'reset':
+                    newCount = 0;
+                    counters.set(guildId, newCount);
+                    break;
+                default:
+                    return true;
+            }
+
+            // Atualizar a mensagem
+            const row = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId('somar')
+                        .setLabel('➕ Somar')
+                        .setStyle(ButtonStyle.Success),
+                    new ButtonBuilder()
+                        .setCustomId('subtrair')
+                        .setLabel('➖ Subtrair')
+                        .setStyle(ButtonStyle.Danger),
+                    new ButtonBuilder()
+                        .setCustomId('reset')
+                        .setLabel('🔄 Resetar')
+                        .setStyle(ButtonStyle.Secondary)
+                );
+
+            const embed = new EmbedBuilder()
+                .setColor(getColorByCount(newCount))
+                .setTitle('🔢 Contador Interativo')
+                .setDescription(`**Contagem atual:**\n# ${newCount}`)
+                .addFields(
+                    {
+                        name: '📊 Estatísticas',
+                        value: `**Positivo:** ${newCount > 0 ? '✅' : '❌'}\n**Negativo:** ${newCount < 0 ? '✅' : '❌'}\n**Zero:** ${newCount === 0 ? '✅' : '❌'}`,
+                        inline: true
+                    },
+                    {
+                        name: '👤 Última ação',
+                        value: `${interaction.user.tag}`,
+                        inline: true
+                    }
+                )
+                .setFooter({
+                    text: `Servidor: ${interaction.guild.name}`
+                })
+                .setTimestamp();
+
+            // Verifica se a interação já foi respondida
+            if (interaction.deferred || interaction.replied) {
+                await interaction.editReply({ 
+                    embeds: [embed], 
+                    components: [row] 
+                });
+            } else {
+                await interaction.update({ 
+                    embeds: [embed], 
+                    components: [row] 
+                });
+            }
+
+            return true;
+
+        } catch (error) {
+            // Ignora erros de interação já processada
+            if (error.code === 10062 || error.code === 40060 || error.code === 'InteractionAlreadyReplied') {
+                return true;
+            }
+            console.error('❌ Erro no contador:', error.message);
+            return true;
         }
-
-        // Atualizar a mensagem
-        const row = new ActionRowBuilder()
-            .addComponents(
-                new ButtonBuilder()
-                    .setCustomId('somar')
-                    .setLabel('➕ Somar')
-                    .setStyle(ButtonStyle.Success),
-                new ButtonBuilder()
-                    .setCustomId('subtrair')
-                    .setLabel('➖ Subtrair')
-                    .setStyle(ButtonStyle.Danger),
-                new ButtonBuilder()
-                    .setCustomId('reset')
-                    .setLabel('🔄 Resetar')
-                    .setStyle(ButtonStyle.Secondary)
-            );
-
-        const embed = {
-            color: getColorByCount(newCount),
-            title: '🔢 Contador Interativo',
-            description: `**Contagem atual:**\n# ${newCount}`,
-            fields: [
-                {
-                    name: '📊 Estatísticas',
-                    value: `**Positivo:** ${newCount > 0 ? '✅' : '❌'}\n**Negativo:** ${newCount < 0 ? '✅' : '❌'}\n**Zero:** ${newCount === 0 ? '✅' : '❌'}`,
-                    inline: true
-                },
-                {
-                    name: '👤 Última ação',
-                    value: `${interaction.user.tag}`,
-                    inline: true
-                }
-            ],
-            footer: {
-                text: `Servidor: ${interaction.guild.name}`
-            },
-            timestamp: new Date().toISOString()
-        };
-
-        await interaction.update({ 
-            embeds: [embed], 
-            components: [row] 
-        });
     }
 };
 
@@ -121,11 +145,11 @@ function sendCounterMessage(message, client, count) {
                 .setStyle(ButtonStyle.Secondary)
         );
 
-    const embed = {
-        color: getColorByCount(count),
-        title: '🔢 Contador Interativo',
-        description: `**Contagem atual:**\n# ${count}`,
-        fields: [
+    const embed = new EmbedBuilder()
+        .setColor(getColorByCount(count))
+        .setTitle('🔢 Contador Interativo')
+        .setDescription(`**Contagem atual:**\n# ${count}`)
+        .addFields(
             {
                 name: '📊 Estatísticas',
                 value: `**Positivo:** ${count > 0 ? '✅' : '❌'}\n**Negativo:** ${count < 0 ? '✅' : '❌'}\n**Zero:** ${count === 0 ? '✅' : '❌'}`,
@@ -136,12 +160,11 @@ function sendCounterMessage(message, client, count) {
                 value: 'Clique nos botões abaixo!',
                 inline: true
             }
-        ],
-        footer: {
+        )
+        .setFooter({
             text: `Servidor: ${message.guild.name}`
-        },
-        timestamp: new Date().toISOString()
-    };
+        })
+        .setTimestamp();
 
     return message.channel.send({ 
         embeds: [embed], 
