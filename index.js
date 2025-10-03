@@ -1,3 +1,13 @@
+// SIMULATE PORT FOR RENDER
+const express = require("express");
+const app = express();
+const PORT = 3000;
+
+app.get("/", (req, res) => res.send("Bot rodando!"));
+app.listen(PORT, () => console.log(`Servidor web na porta ${PORT}`));
+
+// -----------------------------------------------------------------------------
+
 const { Client, GatewayIntentBits } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
